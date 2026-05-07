@@ -79,12 +79,13 @@ export default function Profile({ onLogout }) {
         setProfile(null)
         setForm(EMPTY_FORM)
       }
-    } catch {
+    } catch (err) {
+      if (err.status === 401) { onLogout(); return }
       flash('error', 'Failed to load profile')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [onLogout])
 
   useEffect(() => { fetchProfile() }, [fetchProfile])
 
@@ -100,7 +101,8 @@ export default function Profile({ onLogout }) {
       } else {
         flash('error', res.message || 'Failed to create profile')
       }
-    } catch {
+    } catch (err) {
+      if (err.status === 401) { onLogout(); return }
       flash('error', 'Server error')
     } finally {
       setSaving(false)
@@ -119,7 +121,8 @@ export default function Profile({ onLogout }) {
       } else {
         flash('error', res.message || 'Failed to update')
       }
-    } catch {
+    } catch (err) {
+      if (err.status === 401) { onLogout(); return }
       flash('error', 'Server error')
     } finally {
       setSaving(false)
@@ -137,7 +140,8 @@ export default function Profile({ onLogout }) {
       } else {
         flash('error', res.message || 'Failed to delete')
       }
-    } catch {
+    } catch (err) {
+      if (err.status === 401) { onLogout(); return }
       flash('error', 'Server error')
     }
   }
@@ -154,7 +158,8 @@ export default function Profile({ onLogout }) {
       } else {
         flash('error', res.message || 'Upload failed')
       }
-    } catch {
+    } catch (err) {
+      if (err.status === 401) { onLogout(); return }
       flash('error', 'Upload failed')
     } finally {
       setUploading(false)

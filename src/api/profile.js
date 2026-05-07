@@ -6,51 +6,57 @@ function authHeaders(extra = {}) {
   return { Authorization: `Bearer ${token}`, ...extra }
 }
 
+// 401 ирвэл тусгай алдаа шиднэ — дуудагч нь token хүчингүй болсныг мэдэж гарах боломжтой болно
+async function apiFetch(url, options) {
+  const res = await fetch(url, options)
+  if (res.status === 401) {
+    const err = new Error('UNAUTHORIZED')
+    err.status = 401
+    throw err
+  }
+  return res.json()
+}
+
 // Өөрийн profile авах
 export async function getMyProfile() {
-  const res = await fetch(`${GATEWAY}/api/users/me`, {
+  return apiFetch(`${GATEWAY}/api/users/me`, {
     headers: authHeaders(),
   })
-  return res.json()
 }
 
 // Шинэ profile үүсгэх
 export async function createProfile(data) {
-  const res = await fetch(`${GATEWAY}/api/users`, {
+  return apiFetch(`${GATEWAY}/api/users`, {
     method: 'POST',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data),
   })
-  return res.json()
 }
 
 // Profile шинэчлэх (зөвхөн өөрийнхөө)
 export async function updateProfile(id, data) {
-  const res = await fetch(`${GATEWAY}/api/users/${id}`, {
+  return apiFetch(`${GATEWAY}/api/users/${id}`, {
     method: 'PUT',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(data),
   })
-  return res.json()
 }
 
 // Profile устгах (зөвхөн өөрийнхөө)
 export async function deleteProfile(id) {
-  const res = await fetch(`${GATEWAY}/api/users/${id}`, {
+  return apiFetch(`${GATEWAY}/api/users/${id}`, {
     method: 'DELETE',
     headers: authHeaders(),
   })
-  return res.json()
 }
 
 // Зураг user-file-service рүү байршуулна — profile шинэчлэлт болон имэйл мэдэгдэл автоматаар явна
 export async function uploadPhoto(file) {
   const form = new FormData()
   form.append('file', file)
-  const res = await fetch(`${GATEWAY}/files/upload`, {
+  return apiFetch(`${GATEWAY}/files/upload`, {
     method: 'POST',
-    headers: authHeaders(), // Content-Type автоматаар multipart/form-data болно
+    headers: authHeaders(),
     body: form,
   })
-  return res.json()
 }
