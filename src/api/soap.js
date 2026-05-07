@@ -1,4 +1,4 @@
-const GATEWAY = import.meta.env.VITE_GATEWAY_URL || 'http://localhost:8080'
+const GATEWAY = 'https://goldfish-app-ue5o7.ondigitalocean.app'
 
 // XML tag-ийн утгыг namespace-г үл харгалзан авна
 function getTag(xml, tag) {
